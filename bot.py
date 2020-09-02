@@ -1,6 +1,6 @@
 import discord, pymongo, datetime
 
-mongo_client = pymongo.MongoClient("mongodb://localhost:27017/") # Connect to mongoDB
+mongo_client = pymongo.MongoClient("mongodb://192.168.1.144:27017/") # Connect to mongoDB
 database = mongo_client["ToDo_Bot_Storage"]
 
 guild_info_col = database["guild_info"]
