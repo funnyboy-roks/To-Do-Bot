@@ -1,0 +1,13 @@
+~~-------------------------------------~~
+**Commands:**
+`/todo add <item>` - Adds item to todo list
+`/todo complete <id>` - Marks an item as complete using the ID number
+`/todo category <id> [new_category]` - Sets a category for the todo item
+`/todo importance <id> <new_importance>` - Shows a specific amount of ! before the todo item(0-3)
+`/todo remove <id>` - Removes an item from the todo list
+`/todo rename <id> <new_name>` - Renames an item on the todo list
+`/todo removecompleted` - Removes all items that have been marked as completed from the todo list
+`/todo info <id>` - Shows information about an item on the ToDo list
+`/todo list` - Shows the current To Do list
+`/todo help` - Displays this message
+~~-------------------------------------~~
