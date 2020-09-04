@@ -24,8 +24,11 @@ async def on_ready():
     print(f'Logged in as: {client.user.name}')
     print(f'With ID: {client.user.id}')
     # update_db()
+    s = "Guilds: "
     for x in guild_info_col.find():
-        print(x)
+        s += x["guild_name"] + ", "
+    print(s)
+
         
     
 
