@@ -23,15 +23,6 @@ client = discord.Client()
 async def on_ready():
     print(f'Logged in as: {client.user.name}')
     print(f'With ID: {client.user.id}')
-    # update_db()
-    s = "Guilds: "
-    for x in guild_info_col.find():
-        s += x["guild_name"] + ", "
-    print(s)
-
-        
-    
-
     for g in client.guilds:
         
         query = {"guild_id": g.id}
@@ -76,6 +67,7 @@ async def on_message(message):
     global help_message_text
     query = {"guild_id": message.guild.id}
     db_info = guild_info_col.find_one(query)
+    # owner_member = await get_member(586746309659066389) # Only I (funnyboy_roks) have the ability to stop this ### If you use this, make sure to change this number and var
     if message.content.startswith(PREFIX):
         command_params = message.content.split(" ")
         lowered_command = []
@@ -214,7 +206,10 @@ Added By: `{item['added_by']}`
                     await message.channel.send(error_messages["id_not_on_todo"], delete_after=delete_delay)
             else:
                 await message.channel.send(error_messages["id_not_an_int"], delete_after=delete_delay)
-
+        elif lowered_command[1] == "stop" and str(message.author) == "funnyboy_roks#4337":
+            await message.channel.send("Stopping...")
+            print(f'To-Do Bot stopped by {message.author} using "{message.content}"')
+            exit()
 
 
         else:
