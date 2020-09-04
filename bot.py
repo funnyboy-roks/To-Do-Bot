@@ -218,7 +218,7 @@ Added By: `{item['added_by']}`
             await message.channel.send(f"Unknown subcommand, `{lowered_command[1]}`. Use `/todo help` for a list of commands.")
 
         await update_messages(message.guild)
-        await message.delete(delay=0)
+        await message.delete()
 
 async def update_messages(g=None):
     if g:
