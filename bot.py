@@ -1,6 +1,10 @@
-import discord, pymongo, datetime
+import discord
+import pymongo
+import datetime
+start_time = datetime.datetime.now()
 
-mongo_client = pymongo.MongoClient("mongodb://localhost:27017/") # Connect to mongoDB
+mongo_client = pymongo.MongoClient(
+    "mongodb://localhost:27017/")  # Connect to mongoDB
 database = mongo_client["ToDo_Bot_Storage"]
 
 guild_info_col = database["guild_info"]
@@ -24,7 +28,7 @@ async def on_ready():
     print(f'Logged in as: {client.user.name}')
     print(f'With ID: {client.user.id}')
     for g in client.guilds:
-        
+
         query = {"guild_id": g.id}
         # print(guild_info_col.find_one(query))
         if not guild_info_col.find_one(query):
@@ -74,18 +78,19 @@ async def on_message(message):
         for x in command_params:
             lowered_command.append(x.lower())
         print(f"{message.author}: {message.content}")
-        if len(lowered_command) <= 1 or lowered_command[1] in ["help", "?"]: # /todo, /todo help, /todo ?
+        # /todo, /todo help, /todo ?
+        if len(lowered_command) <= 1 or lowered_command[1] in ["help", "?"]:
             await message.channel.send(content=help_message_text, delete_after=delete_delay)
             await update_messages(g=message.guild)
 
-        elif lowered_command[1] in ["add"]: # /todo add
+        elif lowered_command[1] in ["add"]:  # /todo add
             todo_list_temp = db_info["todo_list"]
             new_item = " ".join(command_params[2:])
             category = ""
             if command_params[2].startswith("[") and command_params[2].endswith("]"):
-                new_item = " ".join(command_params[3:]) 
+                new_item = " ".join(command_params[3:])
                 category = command_params[2][1:-1]
-            
+
             todo_list_temp.append({
                 "item": new_item,
                 "completed": False,
@@ -97,7 +102,6 @@ async def on_message(message):
             update_db(message.guild, todo_list=todo_list_temp)
             returnMessage = f"\"{new_item}\" added to ToDo list by **{message.author.name}**"
             await message.channel.send(returnMessage, delete_after=delete_delay)
-
 
         elif lowered_command[1] in ["complete", "done", "finish"]:
             if is_int(lowered_command[2]):
@@ -154,7 +158,6 @@ Added By: `{item['added_by']}`
 
         elif lowered_command[1] in ["reload", "refresh"]:
             help_message_text = open("help_message.txt", "r").read()
-            
 
             await message.channel.send(f"ToDo bot reloaded.", delete_after=delete_delay)
         elif lowered_command[1] in ["category", "cat"]:
@@ -169,7 +172,7 @@ Added By: `{item['added_by']}`
                         todo_list[index]["category"] = ""
                     update_db(g=message.guild, todo_list=todo_list)
                     await message.channel.send(f"Category for `{todo_list[index]['item']}` set to `{lowered_command[3]}` by **{message.author.name}**", delete_after=delete_delay)
-                    
+
                 else:
                     await message.channel.send(error_messages["id_not_on_todo"], delete_after=delete_delay)
             else:
@@ -186,7 +189,7 @@ Added By: `{item['added_by']}`
                     todo_list[index]["item"] = new_name
                     update_db(g=message.guild, todo_list=todo_list)
                     await message.channel.send(f"Renamed {old_name} to {new_name} by **{message.author.name}**", delete_after=delete_delay)
-                    
+
                 else:
                     await message.channel.send(error_messages["id_not_on_todo"], delete_after=delete_delay)
             else:
@@ -201,22 +204,37 @@ Added By: `{item['added_by']}`
                     todo_list.pop(index)
                     update_db(g=message.guild, todo_list=todo_list)
                     await message.channel.send(f"`{deleted_item['item']}` has been deleted by **{message.author.name}**", delete_after=delete_delay)
-                    
+
                 else:
                     await message.channel.send(error_messages["id_not_on_todo"], delete_after=delete_delay)
             else:
                 await message.channel.send(error_messages["id_not_an_int"], delete_after=delete_delay)
         elif lowered_command[1] == "stop" and str(message.author) == "funnyboy_roks#4337":
             await message.channel.send("Stopping...")
-            print(f'To-Do Bot stopped by {message.author} using "{message.content}"')
+            print(
+                f'To-Do Bot stopped by {message.author} using "{message.content}"')
             exit()
 
+        elif lowered_command[1] in ["uptime"]:
+            dur = datetime.datetime.now() - start_time
+            ts = dur.total_seconds()
+            s = ts % (24 * 3600)
+            h = s // 3600
+            s %= 3600
+            m = s // 60
+            s %= 60
+            s = str(int(s)).zfill(2)
+            m = str(int(m)).zfill(2)
+            h = str(int(h)).zfill(2)
+
+            await channel.send(content=f'Bot Uptime: `{h}:{m}:{s}`', delete_after=delete_delay)
 
         else:
             await message.channel.send(f"Unknown subcommand, `{lowered_command[1]}`. Use `/todo help` for a list of commands.")
 
         await update_messages(message.guild)
         await message.delete()
+
 
 async def update_messages(g=None):
     if g:
@@ -255,6 +273,7 @@ def update_db(g=None, **options):
     else:
         guild_info_col.update_one(query, {"$set": GUILD_DICT})
 
+
 def is_int(s, r=False):
     try:
         int(s)
@@ -264,6 +283,7 @@ def is_int(s, r=False):
             return int(s)
     except ValueError:
         return False
+
 
 def formattedToDo(todo_list, topic=False):
     s = "ToDo List: "
@@ -287,5 +307,6 @@ def formattedToDo(todo_list, topic=False):
     if len(todo_list) <= 0:
         s += "\nThere's nothing on your ToDo list!"
     return s
+
 
 client.run(TOKEN)
