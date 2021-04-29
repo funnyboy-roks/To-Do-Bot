@@ -1,8 +1,6 @@
 # To-Do-Bot
 A simple To Do discord bot written in Python
 
+# Archived
 
-## Add to your server with
-[To-Do-Bot](https://discord.com/api/oauth2/authorize?client_id=740192469878308955&permissions=8&scope=bot)
-
-* Right now, this is asking for full admin permissions, this will be fixed later, but I haven't had the time to go through it. 
+This is an outdated version of the To Do Bot.  Find the new one at [To-Do-Bot-v2](https://github.com/funnyboy-roks/to-do-bot-v2).
